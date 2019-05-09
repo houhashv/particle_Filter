@@ -14,11 +14,12 @@ def particle_wt(X_t, ut, world):
     """
     robot = Robot()
     robot.set(X_t[0], X_t[1], X_t[2])
-    robot.plot(mycolor='black', style="particle", show=False)
     robot.set_noise(5, 0.1, 5)
     xt = robot.move(ut[0], ut[1])
     zt = robot.sense(world)
     wt = robot.measurement_probability(zt, 0, None, world)
+    robot.plot(mycolor='k', style="particle", show=False)
+    xt = (int(10 * xt[0]) / 10, int(10 * xt[1]) / 10, int(10 * xt[2]) / 10)
     return xt, wt
 
 
@@ -47,7 +48,7 @@ def MCL(X_t_1, num_of_particles, ut, world):
     for particle in draws:
         robot = Robot()
         robot.set(particle[0], particle[1], particle[2])
-        robot.plot(mycolor='grey', style="particle", show=False)
+        robot.plot(mycolor='#5F6A6A', style="particle", show=False)
     x = np.mean([x[0] for x in draws])
     y = np.mean([x[1] for x in draws])
     theta = np.mean([x[2] for x in draws])
@@ -111,4 +112,4 @@ if __name__ == "__main__":
     robot = Robot()
     robot.set(X_t_1[0], X_t_1[1], X_t_1[2])
     robot.set_noise(5, 0.1, 5)
-    robot.straight_line(results, True, True, True)
+    robot.plotint(results, True, True, True)

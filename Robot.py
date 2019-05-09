@@ -57,16 +57,15 @@ class Robot:
         :param show: if to show or not show - used to create a new figure or not
         """
         if style == "robot":
-
             phi = np.linspace(0, 2 * np.pi, 101)
             r = 1
             # plot robot body
-            plt.plot(self.x + r * np.cos(phi), self.y + r * np.sin(phi), mycolor)
+            plt.plot(self.x + r * np.cos(phi), self.y + r * np.sin(phi), color=mycolor)
             # plot heading direction
-            plt.plot([self.x, self.x + r * np.cos(self.theta)], [self.y, self.y + r * np.sin(self.theta)], mycolor)
+            plt.plot([self.x, self.x + r * np.cos(self.theta)], [self.y, self.y + r * np.sin(self.theta)], color=mycolor)
 
         elif style == "particle":
-            plt.plot(self.x, self.y, '.', mycolor)
+            plt.plot(self.x, self.y, '.', color=mycolor, markersize=1)
         else:
             print("unknown style")
 
@@ -100,9 +99,9 @@ class Robot:
             u1_noise = 0
             u2_noise = 0
 
-        self.theta = int(10 * (self.theta + u1 + u1_noise)) / 10
-        self.x = int(10 * (self.x + (u2 + u2_noise) * np.cos(self.theta))) / 10
-        self.y = int(10 * (self.y + (u2 + u2_noise) * np.sin(self.theta))) / 10
+        self.theta = int(1000 * (self.theta + u1 + u1_noise)) / 1000
+        self.x = int(1000 * (self.x + (u2 + u2_noise) * np.cos(self.theta))) / 1000
+        self.y = int(1000 * (self.y + (u2 + u2_noise) * np.sin(self.theta))) / 1000
 
         if self.x > self._world_size:
             while(self.x > self._world_size):
