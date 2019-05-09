@@ -4,11 +4,19 @@ import numpy as np
 from ast import literal_eval
 
 
-def MCL(X_t_1, ut, zt, world, num_of_particales):
-
+def MCL(X_t_1, ut, zt, world, num_of_particles):
+    """
+    the particle filter step - using the monte carlo method
+    :param X_t_1: the pose in time t-1
+    :param ut: the movement in time t
+    :param zt: the measurement in time t
+    :param world: the map of the world
+    :param num_of_particles: the number of particles to use in order to estimate the pose in time t
+    :return: the pose in step t - (x, y, theta)
+    """
     X_t = {}
 
-    for i in range(num_of_particales):
+    for i in range(num_of_particles):
 
         robot = Robot()
         robot.set(X_t_1[0], X_t_1[1], X_t_1[2])
@@ -43,62 +51,60 @@ def MCL(X_t_1, ut, zt, world, num_of_particales):
     y = np.mean([x[1] for x in draws])
     theta = np.mean([x[2] for x in draws])
 
-    return (x, y, theta)
+    return x, y, theta
 
 
 if __name__ == "__main__":
 
+    # declare the world
     world = World()
-    # world.plot()
+    # robots declarations
     robot1 = Robot()
     robot1.set_noise(5, 0.1, 5)
     robot2 = Robot()
     robot2.set_noise(5, 0.1, 5)
     robot3 = Robot()
     robot3.set_noise(5, 0.1, 5)
-    # a
+    # a - section
     poses = [(40, 40, 0), (60, 50, np.pi / 2), (30, 70, 3 * np.pi / 4)]
-    # a - robot 1
+    # a - section - robot 1
     robot1.set(poses[0][0], poses[0][1], poses[0][2])
     world.plot(False)
     robot1.plot(show=False)
+    print("robot 1 pose:")
     robot1.print()
-    # a - robot 2
+    # a - section - robot 2
     robot2.set(poses[1][0], poses[1][1], poses[1][2])
-    # world.plot(False)
     robot2.plot(show=False)
+    print("robot 2 pose:")
     robot2.print()
-    # a - robot 3
+    # a - section - robot 3
     robot3.set(poses[2][0], poses[2][1], poses[2][2])
-    # world.plot(False)
     robot3.plot(show=True)
+    print("robot 3 pose:")
     robot3.print()
-    # b - implemented in robot class
-    # c - implemented in robot class
-    # d - implemented in robot class
-    measurements = robot1.sense(world)
-    actions = [(0, 60),
-               (np.pi / 3, 30),
-               (np.pi / 4, 30),
-               (np.pi / 4, 20),
-               (np.pi / 4, 40)]
-    # e
+    # b - section - implemented in robot class
+    # c - section - implemented in robot class
+    # d - section - implemented in robot class
+    print("robot 1 measurements: {}".format(robot1.sense(world)))
+    # e - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
+    actions = [(0, 60), (np.pi / 3, 30), (np.pi / 4, 30), (np.pi / 4, 20), (np.pi / 4, 40)]
     no_noise_poses = robot.straight_line(actions, False, False)
-    # f
+    # f - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
     real_poses = robot.straight_line(actions, True, False)
-    # g
-    num_of_particales = 1000
+    # g - section
+    num_of_particles = 1000
     X_t_1 = (10, 15, 0)
     results = [X_t_1]
 
     for ut in actions:
-        results.append(MCL(results[-1], ut, None, world, num_of_particales))
+        results.append(MCL(results[-1], ut, None, world, num_of_particles))
 
     robot = Robot()
     robot.set(X_t_1[0], X_t_1[1], X_t_1[2])

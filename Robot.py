@@ -1,27 +1,38 @@
+"""
+in this module we are declaring the robot class
+"""
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.stats import norm
-from Ploter import Ploter
+from Ploter import config_plot
 
 
 class Robot:
-
+    """
+    the robot class, we will use this to describe a robot
+    """
     def __init__(self, world_size=100):
-
-        self._ploter = Ploter()
+        """
+        creating a robot object
+        :param world_size: the world size in pixels
+        """
         self._world_size = world_size
-        # pose
+        # pose declaration
         self.x = np.random.rand() * self._world_size
         self.y = np.random.rand() * self._world_size
         self.theta = np.random.rand() * 2 * np.pi
-
-        # noise
+        # noise declaration
         self.forward_noise = 0
         self.turn_noise = 0
         self.sense_distance_noise = 0
 
     def set(self, new_x, new_y, new_orientation):
-
+        """
+        setting the configuration of the robot
+        :param new_x: the new x coordinate
+        :param new_y: the new y coordinate
+        :param new_orientation: the new orientation
+        """
         if new_x < 0 or new_x >= self._world_size:
             raise Exception('X coordinate out of bound')
 
@@ -36,11 +47,18 @@ class Robot:
         self.theta = new_orientation
 
     def print(self):
-
+        """
+        printing the pose
+        """
         print('[x= {} y={} heading={}]'.format(self.x, self.y, self.theta))
 
     def plot(self, mycolor="b", style="robot", show=True):
-
+        """
+        plotting the pose of the robot in the world
+        :param mycolor: the color of the robot
+        :param style: the style to plot with
+        :param show: if to show or not show - used to create a new figure or not
+        """
         if style == "robot":
 
             phi = np.linspace(0, 2 * np.pi, 101)
@@ -59,13 +77,25 @@ class Robot:
             plt.show()
 
     def set_noise(self, new_forward_noise, new_turn_noise, new_sensing_distance_noise):
-
+        """
+        setting the noise if pose of the robot
+        :param new_forward_noise: the noise for moving forward
+        :param new_turn_noise: the noise in the turn of the robot
+        :param new_sensing_distance_noise: the noise in measurement
+        """
         self.forward_noise = new_forward_noise
         self.turn_noise = new_turn_noise
         self.sense_distance_noise = new_sensing_distance_noise
 
     def move(self, u1, u2, meu_u1=0, meu_u2=0, noise=True):
-
+        """
+        moving to the location that the robot said
+        :param u1: the forward movement
+        :param u2: the rotational movement
+        :param meu_u1: the mean of forward movement
+        :param meu_u2: the mean of rotational movement
+        :param noise: the noise of movement
+        """
         if noise:
             u1_noise = np.random.normal(meu_u1, self.turn_noise)
             u2_noise = np.random.normal(meu_u2, self.forward_noise)
@@ -93,7 +123,10 @@ class Robot:
         return self.x, self.y, self.theta
 
     def sense(self, m):
-
+        """
+        sensing and measuring the pose according to the landmarks
+        :param m: the map of the world
+        """
         meu = 0
         landmarks = np.asarray(m.get_landmarks())
         location = np.asarray([(self.x, self.y) for i in range(len(landmarks))])
@@ -101,7 +134,14 @@ class Robot:
                         landmarks, location))
 
     def measurement_probability(self, f, c, x=None, m=None):
-
+        """
+        measuring the measurement density of probability
+        :param f: the land marks
+        :param c: the index of the landmark - not used because if the assumption of equivalency
+        :param x: not used in this implementation
+        :param m: the map
+        :return: the density probability of the measurement
+        """
         q = 1
         for c in range(len(f)):
             i = c
@@ -111,11 +151,19 @@ class Robot:
         return q
 
     def get_pose(self):
-
+        """
+        returning the pose vector
+        :return: (x, y, theta) the pose vector
+        """
         return self.x, self.y, self.theta
 
     def straight_line(self, actions, noise=False, show=True):
-
+        """
+        moving in a straight line
+        :param actions: the actions of movment (u1, u2)
+        :param noise: the noise of movement - is the movement noisy or not
+        :param show: an indicator to use in order to plot or not
+        """
         poses = [self.get_pose()]
 
         for action in actions:
@@ -127,13 +175,18 @@ class Robot:
         return poses
 
     def plotint(self, poses, noise, show):
-
+        """
+        plotting the line in the world
+        :param poses: the poses to plot [[(x, y), theta]]
+        :param noise: the noise of movement - is the movement noisy or not
+        :param show: an indicator to use in order to plot or not
+        """
         plt.rcParams.update({'font.size': 16})
         if noise:
             plt.plot([x[0] for x in poses], [x[1] for x in poses], dashes=[6, 2])
         else:
             plt.plot([x[0] for x in poses], [x[1] for x in poses])
-        self._ploter.config_plot(plt, self._world_size)
+        config_plot(plt, self._world_size)
         times = ["time {}".format(i) for i in range(len(poses))]
         for i, m in enumerate(times):
             plt.text(poses[i][0] - 3, poses[i][1] + 3, m, fontsize=11)
