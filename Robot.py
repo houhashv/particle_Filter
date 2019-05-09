@@ -42,7 +42,6 @@ class Robot:
     def plot(self, mycolor="b", style="robot", show=True):
 
         if style == "robot":
-
             phi = np.linspace(0, 2 * np.pi, 101)
             r = 1
             # plot robot body
@@ -114,7 +113,7 @@ class Robot:
 
         return self.x, self.y, self.theta
 
-    def straight_line(self, actions, noise=False, show=True):
+    def straight_line(self, actions, noise=False, particle=False, show=True):
 
         poses = [self.get_pose()]
 
@@ -122,18 +121,21 @@ class Robot:
             self.move(action[0], action[1], noise=noise)
             poses.append(self.get_pose())
 
-        self.plotint(poses, noise, show)
+        self.plotint(poses, noise, particle, show)
 
         return poses
 
-    def plotint(self, poses, noise, show):
+    def plotint(self, poses, noise, particle, show):
 
         fig = plt.figure()
         plt.rcParams.update({'font.size': 16})
         if noise:
-            plt.plot([x[0] for x in poses], [x[1] for x in poses], dashes=[6, 2])
+            if particle:
+                plt.plot([x[0] for x in poses], [x[1] for x in poses], '-.')
+            else:
+                plt.plot([x[0] for x in poses], [x[1] for x in poses])
         else:
-            plt.plot([x[0] for x in poses], [x[1] for x in poses])
+            plt.plot([x[0] for x in poses], [x[1] for x in poses], dashes=[6, 2])
         self._ploter.config_plot(plt, self._world_size)
         times = ["time {}".format(i) for i in range(len(poses))]
         for i, m in enumerate(times):
