@@ -37,24 +37,12 @@ def MCL(X_t_1, num_of_particles, ut, world):
             X_t[str(xt)] += wt
         else:
             X_t[str(xt)] = wt
-
-    draws = []
-    total_sum = sum(X_t.values())
-    measures = np.asarray(sorted(X_t.items(), key=lambda kv: (kv[1], kv[0])))
-    M = measures.shape[0]
-    rand = np.random.random() / (M - 1)
-    for m in range(0, M):
-        accumulate = float(measures[0][1]) / total_sum
-        i = 0
-        U = rand + m / (M - 1)
-        while U > accumulate:
-            i += 1
-            try:
-                accumulate += float(measures[i][1]) / total_sum
-            except:
-                break
-        pose = literal_eval(measures[i - 1][0])
-        draws.append(pose)
+    norm = sum(X_t.values())
+    for key in X_t.keys():
+        X_t[key] = X_t[key] / norm
+    keys = list(X_t.keys())
+    prob = list(X_t.values())
+    draws = [literal_eval(x) for x in np.random.choice(keys, num_of_particles, replace=True, p=prob)]
 
     for particle in draws:
         robot = Robot()
@@ -72,35 +60,35 @@ if __name__ == "__main__":
 
     # declare the world
     world = World()
-    # robots declarations
-    robot1 = Robot()
-    robot1.set_noise(5, 0.1, 5)
-    robot2 = Robot()
-    robot2.set_noise(5, 0.1, 5)
-    robot3 = Robot()
-    robot3.set_noise(5, 0.1, 5)
-    # a - section
-    poses = [(40, 40, 0), (60, 50, np.pi / 2), (30, 70, 3 * np.pi / 4)]
-    # a - section - robot 1
-    robot1.set(poses[0][0], poses[0][1], poses[0][2])
-    world.plot(False)
-    robot1.plot(show=False)
-    print("robot 1 pose:")
-    robot1.print()
-    # a - section - robot 2
-    robot2.set(poses[1][0], poses[1][1], poses[1][2])
-    robot2.plot(show=False)
-    print("robot 2 pose:")
-    robot2.print()
-    # a - section - robot 3
-    robot3.set(poses[2][0], poses[2][1], poses[2][2])
-    robot3.plot(show=True)
-    print("robot 3 pose:")
-    robot3.print()
-    # b - section - implemented in robot class
-    # c - section - implemented in robot class
-    # d - section - implemented in robot class
-    # e - section
+    # # robots declarations
+    # robot1 = Robot()
+    # robot1.set_noise(5, 0.1, 5)
+    # robot2 = Robot()
+    # robot2.set_noise(5, 0.1, 5)
+    # robot3 = Robot()
+    # robot3.set_noise(5, 0.1, 5)
+    # # a - section
+    # poses = [(40, 40, 0), (60, 50, np.pi / 2), (30, 70, 3 * np.pi / 4)]
+    # # a - section - robot 1
+    # robot1.set(poses[0][0], poses[0][1], poses[0][2])
+    # world.plot(False)
+    # robot1.plot(show=False)
+    # print("robot 1 pose:")
+    # robot1.print()
+    # # a - section - robot 2
+    # robot2.set(poses[1][0], poses[1][1], poses[1][2])
+    # robot2.plot(show=False)
+    # print("robot 2 pose:")
+    # robot2.print()
+    # # a - section - robot 3
+    # robot3.set(poses[2][0], poses[2][1], poses[2][2])
+    # robot3.plot(show=True)
+    # print("robot 3 pose:")
+    # robot3.print()
+    # # b - section - implemented in robot class
+    # # c - section - implemented in robot class
+    # # d - section - implemented in robot class
+    # # e - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
