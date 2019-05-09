@@ -3,8 +3,32 @@ from World import World
 import numpy as np
 from ast import literal_eval
 
-def MCL(particles, ut, world):
 
+def particle_wt (X_t, ut, world):
+    """
+    calculates the weight to each particle
+    :param X_t: starting point
+    :param ut: action commend
+    :param world: map
+    :return: particle location and weight
+    """
+    robot = Robot()
+    robot.set(X_t[0], X_t[1], X_t[2])
+    robot.set_noise(5, 0.1, 5)
+    xt = robot.move(ut[0], ut[1])
+    zt = robot.sense(world)
+    wt = robot.measurement_probability(zt, 0, None, world)
+    return xt, wt
+
+
+def MCL(particles, ut, world):
+    """
+    Monte Carlo Localization algoritem
+    :param particles: vector of particles location
+    :param ut: action commend
+    :param world: map
+    :return: estimate pose of the robot, updated vector of particles location
+    """
     X_t = {}
     for particle in particles:
         xt, wt = particle_wt(particle, ut, world)
@@ -38,68 +62,56 @@ def MCL(particles, ut, world):
 
     return pose, draws
 
-def particle_wt (X_t, ut, world):
-
-    robot = Robot()
-    robot.set(X_t[0], X_t[1], X_t[2])
-    robot.set_noise(5, 0.1, 5)
-    xt = robot.move(ut[0], ut[1])
-    zt = robot.sense(world)
-    wt = robot.measurement_probability(zt, 0, None, world)
-    return xt, wt
 
 if __name__ == "__main__":
 
+    # declare the world
     world = World()
-    # world.plot()
+    # robots declarations
     robot1 = Robot()
     robot1.set_noise(5, 0.1, 5)
     robot2 = Robot()
     robot2.set_noise(5, 0.1, 5)
     robot3 = Robot()
     robot3.set_noise(5, 0.1, 5)
-    # a
+    # a - section
     poses = [(40, 40, 0), (60, 50, np.pi / 2), (30, 70, 3 * np.pi / 4)]
-    # a - robot 1
+    # a - section - robot 1
     robot1.set(poses[0][0], poses[0][1], poses[0][2])
     world.plot(False)
-    robot1.plot()
+    robot1.plot(show=False)
+    print("robot 1 pose:")
     robot1.print()
-    # a - robot 2
+    # a - section - robot 2
     robot2.set(poses[1][0], poses[1][1], poses[1][2])
-    world.plot(False)
-    robot2.plot()
+    robot2.plot(show=False)
+    print("robot 2 pose:")
     robot2.print()
-    # a - robot 3
+    # a - section - robot 3
     robot3.set(poses[2][0], poses[2][1], poses[2][2])
-    world.plot(False)
-    robot3.plot()
+    robot3.plot(show=True)
+    print("robot 3 pose:")
     robot3.print()
-    # b - implemented in robot class
-    # c - implemented in robot class
-    # d - implemented in robot class
-    measurements = robot1.sense(world)
-    actions = [(0, 60),
-               (np.pi / 3, 30),
-               (np.pi / 4, 30),
-               (np.pi / 4, 20),
-               (np.pi / 4, 40)]
-    # e
-
+    # b - section - implemented in robot class
+    # c - section - implemented in robot class
+    # d - section - implemented in robot class
+    print("robot 1 measurements: {}".format(robot1.sense(world)))
+    # e - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
+    actions = [(0, 60), (np.pi / 3, 30), (np.pi / 4, 30), (np.pi / 4, 20), (np.pi / 4, 40)]
     no_noise_poses = robot.straight_line(actions, False, False, False)
-    # f
+    # f - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
-    real_poses = robot.straight_line(actions, True, False, True)
-    # g
-    num_of_particales = 1000
+    real_poses = robot.straight_line(actions, True, False, False)
+    # g - section
+    num_of_particles = 1000
     X_t_1 = (10, 15, 0)
     results = [X_t_1]
-    particles = np.tile(X_t_1, (num_of_particales, 1))
+    particles = np.tile(X_t_1, (num_of_particles, 1))
 
     for ut in actions:
         pose, particles = MCL(particles, ut, world)
@@ -109,6 +121,3 @@ if __name__ == "__main__":
     robot.set(X_t_1[0], X_t_1[1], X_t_1[2])
     robot.set_noise(5, 0.1, 5)
     robot.straight_line(results, True, True, True)
-
-
-
