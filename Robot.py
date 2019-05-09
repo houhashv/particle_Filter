@@ -44,7 +44,7 @@ class Robot:
         self.theta = new_orientation
 
     def print(self):
-        """
+        """"
         printing the pose
         """
         print('[x= {} y={} heading={}]'.format(self.x, self.y, self.theta))

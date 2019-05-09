@@ -4,7 +4,7 @@ import numpy as np
 from ast import literal_eval
 
 
-def particle_wt (X_t, ut, world):
+def particle_wt(X_t, ut, world):
     """
     calculates the weight to each particle
     :param X_t: starting point
@@ -14,6 +14,7 @@ def particle_wt (X_t, ut, world):
     """
     robot = Robot()
     robot.set(X_t[0], X_t[1], X_t[2])
+    robot.plot(mycolor='black', style="particle", show=False)
     robot.set_noise(5, 0.1, 5)
     xt = robot.move(ut[0], ut[1])
     zt = robot.sense(world)
@@ -21,7 +22,7 @@ def particle_wt (X_t, ut, world):
     return xt, wt
 
 
-def MCL(particles, ut, world):
+def MCL(X_t_1, num_of_particles, ut, world):
     """
     Monte Carlo Localization algoritem
     :param particles: vector of particles location
@@ -30,8 +31,8 @@ def MCL(particles, ut, world):
     :return: estimate pose of the robot, updated vector of particles location
     """
     X_t = {}
-    for particle in particles:
-        xt, wt = particle_wt(particle, ut, world)
+    for i in range(num_of_particles):
+        xt, wt = particle_wt(X_t_1, ut, world)
         if str(xt) in X_t.keys():
             X_t[str(xt)] += wt
         else:
@@ -55,12 +56,16 @@ def MCL(particles, ut, world):
         pose = literal_eval(measures[i - 1][0])
         draws.append(pose)
 
+    for particle in draws:
+        robot = Robot()
+        robot.set(particle[0], particle[1], particle[2])
+        robot.plot(mycolor='grey', style="particle", show=False)
     x = np.mean([x[0] for x in draws])
     y = np.mean([x[1] for x in draws])
     theta = np.mean([x[2] for x in draws])
     pose = (x, y, theta)
 
-    return pose, draws
+    return pose
 
 
 if __name__ == "__main__":
@@ -95,7 +100,6 @@ if __name__ == "__main__":
     # b - section - implemented in robot class
     # c - section - implemented in robot class
     # d - section - implemented in robot class
-    print("robot 1 measurements: {}".format(robot1.sense(world)))
     # e - section
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
@@ -111,11 +115,10 @@ if __name__ == "__main__":
     num_of_particles = 1000
     X_t_1 = (10, 15, 0)
     results = [X_t_1]
-    particles = np.tile(X_t_1, (num_of_particles, 1))
 
     for ut in actions:
-        pose, particles = MCL(particles, ut, world)
-        results.append(pose)
+        X_t_1 = MCL(results[-1], num_of_particles, ut, world)
+        results.append(X_t_1)
 
     robot = Robot()
     robot.set(X_t_1[0], X_t_1[1], X_t_1[2])
