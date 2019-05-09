@@ -128,7 +128,6 @@ class Robot:
 
     def plotint(self, poses, noise, show):
 
-        fig = plt.figure()
         plt.rcParams.update({'font.size': 16})
         if noise:
             plt.plot([x[0] for x in poses], [x[1] for x in poses], dashes=[6, 2])
@@ -138,7 +137,9 @@ class Robot:
         times = ["time {}".format(i) for i in range(len(poses))]
         for i, m in enumerate(times):
             plt.text(poses[i][0] - 3, poses[i][1] + 3, m, fontsize=11)
-        ax = fig.gca()
-        ax.set_aspect("equal")
+
         if show:
+            # fig = plt.gca()
+            ax = plt.gca()
+            ax.set_aspect("equal")
             plt.show()

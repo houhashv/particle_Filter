@@ -91,7 +91,7 @@ if __name__ == "__main__":
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
-    real_poses = robot.straight_line(actions, True, True)
+    real_poses = robot.straight_line(actions, True, False)
     # g
     num_of_particales = 1000
     X_t_1 = (10, 15, 0)
