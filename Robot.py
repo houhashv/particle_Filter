@@ -49,7 +49,7 @@ class Robot:
         """
         print('[x= {} y={} heading={}]'.format(self.x, self.y, self.theta))
 
-    def plot(self, mycolor="b", style="robot", show=True):
+    def plot(self, mycolor="b", style="robot", show=True, markersize=1):
         """
         plotting the pose of the robot in the world
         :param mycolor: the color of the robot
@@ -65,7 +65,7 @@ class Robot:
             plt.plot([self.x, self.x + r * np.cos(self.theta)], [self.y, self.y + r * np.sin(self.theta)], color=mycolor)
 
         elif style == "particle":
-            plt.plot(self.x, self.y, '.', color=mycolor, markersize=1)
+            plt.plot(self.x, self.y, '.', color=mycolor, markersize=markersize)
         else:
             print("unknown style")
 
@@ -99,9 +99,9 @@ class Robot:
             u1_noise = 0
             u2_noise = 0
 
-        self.theta = int(1000 * (self.theta + u1 + u1_noise)) / 1000
-        self.x = int(1000 * (self.x + (u2 + u2_noise) * np.cos(self.theta))) / 1000
-        self.y = int(1000 * (self.y + (u2 + u2_noise) * np.sin(self.theta))) / 1000
+        self.theta = self.theta + u1 + u1_noise
+        self.x = self.x + (u2 + u2_noise) * np.cos(self.theta)
+        self.y = self.y + (u2 + u2_noise) * np.sin(self.theta)
 
         if self.x > self._world_size:
             while(self.x > self._world_size):
