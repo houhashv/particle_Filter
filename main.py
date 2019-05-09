@@ -61,17 +61,17 @@ if __name__ == "__main__":
     # a - robot 1
     robot1.set(poses[0][0], poses[0][1], poses[0][2])
     world.plot(False)
-    robot1.plot()
+    robot1.plot(show=False)
     robot1.print()
     # a - robot 2
     robot2.set(poses[1][0], poses[1][1], poses[1][2])
-    world.plot(False)
-    robot2.plot()
+    # world.plot(False)
+    robot2.plot(show=False)
     robot2.print()
     # a - robot 3
     robot3.set(poses[2][0], poses[2][1], poses[2][2])
-    world.plot(False)
-    robot3.plot()
+    # world.plot(False)
+    robot3.plot(show=True)
     robot3.print()
     # b - implemented in robot class
     # c - implemented in robot class
@@ -83,7 +83,6 @@ if __name__ == "__main__":
                (np.pi / 4, 20),
                (np.pi / 4, 40)]
     # e
-    # todo make sure to plot the path in case we exist the limits and re enter the other side
     robot = Robot()
     robot.set_noise(5, 0.1, 5)
     robot.set(10, 15, 0)
