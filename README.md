@@ -2,15 +2,15 @@
 this is a partical filter implementation in python
 Intelligent Robotics Systems
 Exercise 2: Particle Filter
-Lecturer: Armin Biess, Ph.D.
-Due date: 9.5.2019
-Monte Carlo Localization of a mobile robot using landmarks [100 pts]
+
+Monte Carlo Localization of a mobile robot using landmarks
 Consider a planar robot with three DOFs x = (x, y, θ) operating in a world of size 100 × 100. The world
 includes four landmarks at
 m = {(20, 20),(80, 80),(20, 80),(80, 20)} ,
 as shown in the figure
 The robot can take two motor commands, a turn movement command u1,(u1 ∈ [0, 2π)) and a forward
-movement command u2 (u2 > 0). The deterministic motion model of the robot is given by
+movement command u2 (u2 > 0). 
+The deterministic motion model of the robot is given by
 θ
 0 = θ + u1 ,
 x
@@ -26,8 +26,7 @@ the world of the robot and includes a plot function. The cRobot class initialize
 pose in the world. This class includes the following functions:
 • set: sets new pose of the robot
 • print: prints the pose of the robot to the Matlab prompt
-• plot: plots the robot in the world [different colors and different plot styles - ’robot’ and ’particle’
-- can be chosen]
+• plot: plots the robot in the world [different colors and different plot styles - ’robot’ and ’particle’ can be chosen]
 • set noise: sets the noise parameters (forward noise, turn noise, sense noise)
 a.)[10 pts] Experiment with the cRobot class by plotting three robots into the world with the following
 poses (x, y, θ): {(40, 40, 0), (60, 50, π/2), (30, 70, 3π/4)} and by printing these poses to the Matlab prompt.
